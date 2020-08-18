@@ -9,7 +9,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.HashMap;
-
+/**
+ * Класс,который отвечает за визуализацию элементов
+ */
 public class VisualTicket extends JButton {
     public static BufferedImage idle;
     public static BufferedImage roll;

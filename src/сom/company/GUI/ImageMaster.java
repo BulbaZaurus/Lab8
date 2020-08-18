@@ -11,6 +11,9 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+/**
+ * Отвечает за загрузку изображений
+ */
 public class ImageMaster {
     public static Font font = new Font("Courier New", Font.BOLD, 17);
     public static Font fontS = new Font("Segoe print", Font.BOLD, 14);

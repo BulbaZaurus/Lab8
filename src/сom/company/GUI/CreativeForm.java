@@ -21,6 +21,9 @@ import java.util.ResourceBundle;
 
 import static сom.company.GUI.LoginForm.currentLocale;
 
+/**
+ * Класс,который отвечает за создание элементов
+ */
 public abstract class CreativeForm extends JFrame implements ActionListener{
     private String name;
     private String coordX;

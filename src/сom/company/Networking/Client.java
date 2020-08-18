@@ -17,11 +17,12 @@ import static сom.company.Networking.Communicator.WriteStringArray;
 import java.io.*;
 import java.net.*;
 import java.nio.channels.DatagramChannel;
+import java.text.NumberFormat;
 import java.util.*;
 
 /**
  * @author }{отт@бь)ч
- * @version 1.8
+ * @version 3.0
  */
 public class Client extends Messenger {
     public  static  User user;
@@ -65,6 +66,12 @@ public class Client extends Messenger {
         ConnectToServer(args[0], args[1]);
         Locale.setDefault(new Locale("pl","PL"));
         System.out.println(Locale.getDefault());
+        double number = 123.4567;
+        NumberFormat numberFormat3 = NumberFormat.getCurrencyInstance(new Locale("ru","RU"));
+        NumberFormat numberFormat4 = NumberFormat.getCurrencyInstance(new Locale("fr"));
+        System.out.println(numberFormat3.format(number));
+        System.out.println(numberFormat4.format(number));
+        System.out.println();
         SwingUtilities.invokeLater(()->LoginForm.StartLogin());
 
 

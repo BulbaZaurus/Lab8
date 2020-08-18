@@ -113,10 +113,7 @@ public class CanvasPanel extends JPanel{
         source.revalidate();
     }
     
-    // public void blankSilent(){
-    //     removeAll();
-    //     addCross();
-    // }
+
 
 
 }

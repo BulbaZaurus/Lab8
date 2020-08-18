@@ -19,6 +19,9 @@ import java.util.ResourceBundle;
 
 import static сom.company.GUI.LoginForm.currentLocale;
 
+/**
+ * Класс,который отвечает за реалиацию команды add
+ */
 public class AddForm extends CreativeForm{
 
     public static AddForm frame = new AddForm();

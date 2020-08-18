@@ -18,7 +18,9 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import static сom.company.GUI.LoginForm.currentLocale;
-
+/**
+ * Класс,который отвечает за реалиацию команды add
+ */
 public class UpdateIDForm extends CreativeForm {
 
     public static UpdateIDForm frame = new UpdateIDForm();

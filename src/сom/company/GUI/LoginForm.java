@@ -14,6 +14,9 @@ import java.awt.event.ActionListener;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Отвечает за регистрацию и авторизацию пользователя
+ */
 public class LoginForm extends JFrame {
     public static LoginForm frame = new LoginForm();
     static User user;
@@ -247,6 +250,7 @@ public class LoginForm extends JFrame {
     }
 
     public static void StartLogin(){
+
         frame.passwordField.setText("");
         frame.userTextField.setText("");
         frame.setTitleWithLocale();

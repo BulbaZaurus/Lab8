@@ -3,6 +3,9 @@ package сom.company.GUI;
 import java.awt.*;
 import javax.swing.*;
 
+/**
+ * Класс,который отвечает за визуальные эффекты
+ */
 public class ComboRenderer extends DefaultListCellRenderer {
     private ListCellRenderer defaultRenderer;
     

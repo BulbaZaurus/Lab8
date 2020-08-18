@@ -20,6 +20,9 @@ import java.util.TreeSet;
 
 import static сom.company.GUI.LoginForm.currentLocale;
 
+/**
+ * Класс,который отвечает за реалиацию команды add If Max
+ */
 public class AddIfMaxForm extends CreativeForm {
 
     public static AddIfMaxForm frame = new AddIfMaxForm();

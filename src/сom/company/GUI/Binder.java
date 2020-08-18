@@ -16,9 +16,14 @@ import java.text.SimpleDateFormat;
 
 import сom.company.Collection.command.*;
 import сom.company.Networking.Client;
+
+import static сom.company.GUI.LoginForm.currentLocale;
 import static сom.company.GUI.MainForm.*;
 import сom.company.Collection.Ticket;
 
+/**
+ * Класс,который отвечает за обработку событий
+ */
 public class Binder {
 
     private MainForm summoner;
@@ -431,9 +436,10 @@ public class Binder {
             if(dantos.size()!=0){
                 for(Ticket ticket2:dantos){
                     NumberFormat numberFormat=NumberFormat.getInstance(LoginForm.currentLocale);
-                    String price =numberFormat.format( ticket2.getPrice());
+                   // String price =numberFormat.format( ticket2.getPrice());
                     String X =numberFormat.format(ticket2.getCoordinates().getY());
                     String Y =numberFormat.format(ticket2.getCoordinates().getX());
+                    NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(currentLocale);
                     SimpleDateFormat simpleDateFormat=new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
                     try{
                         ticket2.setCreationDate(simpleDateFormat.parse(ticket2.getTime()));
@@ -444,7 +450,7 @@ public class Binder {
                     SimpleDateFormat sD=new SimpleDateFormat(resourceBundle.getString("date"));
                     tableModel.addRow(new Object[]{
                             ticket2.getId(), ticket2.getName(), X, Y,
-                            price, ticket2.getComment(), ticket2.getType(), ticket2.getEvent().getEventType(),
+                            currencyInstance.format(getPrice()), ticket2.getComment(), ticket2.getType(), ticket2.getEvent().getEventType(),
                             ticket2.getEvent().getName(), ticket2.getEvent().getId(), ticket2.getRefundable(), 
                             ticket2.getUser().getName(), sD.format(ticket2.getCreationDate())});
                 }
@@ -477,9 +483,10 @@ public class Binder {
             if(dantos.size()!=0){
                 for(Ticket ticket2:dantos){
                     NumberFormat numberFormat=NumberFormat.getInstance(LoginForm.currentLocale);
-                    String price =numberFormat.format( ticket2.getPrice());
-                    String X =numberFormat.format(ticket2.getCoordinates().getY());
-                    String Y =numberFormat.format(ticket2.getCoordinates().getX());
+                    //String price =numberFormat.format( ticket2.getPrice());
+                    String X =numberFormat.format(ticket2.getCoordinates().getX());
+                    String Y =numberFormat.format(ticket2.getCoordinates().getY());
+                    NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(currentLocale);
                     SimpleDateFormat simpleDateFormat=new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
                     try{
                         ticket2.setCreationDate(simpleDateFormat.parse(ticket2.getTime()));
@@ -490,7 +497,7 @@ public class Binder {
                     SimpleDateFormat sD=new SimpleDateFormat(resourceBundle.getString("date"));
                     tableModel.addRow(new Object[]{
                             ticket2.getId(), ticket2.getName(), X, Y,
-                            price, ticket2.getComment(), ticket2.getType(), ticket2.getEvent().getEventType(),
+                            currencyInstance.format(ticket2.getPrice()), ticket2.getComment(), ticket2.getType(), ticket2.getEvent().getEventType(),
                             ticket2.getEvent().getName(), ticket2.getEvent().getId(), ticket2.getRefundable(), 
                             ticket2.getUser().getName(), sD.format(ticket2.getCreationDate())});
                 }
@@ -524,7 +531,7 @@ public class Binder {
             JOptionPane.showMessageDialog(null,remind);
             Binder.clearTable();
             for(Ticket ticket:treereverse){
-                NumberFormat numberFormat=NumberFormat.getInstance(LoginForm.currentLocale);
+                NumberFormat numberFormat=NumberFormat.getCurrencyInstance(LoginForm.currentLocale);
                 String price =numberFormat.format( ticket.getPrice());
                 tableModel.addRow(new Object[]{
                     ticket.getId(), null, null, null,
@@ -537,7 +544,7 @@ public class Binder {
 
     public void help(){
         if(getNightMare()){
-            JOptionPane.showMessageDialog(null, null, "Noone will help you...", 0, ImageMaster.Iconize(ImageMaster.gus));
+            JOptionPane.showMessageDialog(null, null, "No one will help you...", 0, ImageMaster.Iconize(ImageMaster.gus));
         }
         else{
             ResourceBundle resourceBundle=ResourceBundle.getBundle("locale",LoginForm.currentLocale);

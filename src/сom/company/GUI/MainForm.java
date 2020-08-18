@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Является главным графическим окном,в котором происходит вся магия
+ */
 public class MainForm extends JFrame{
     static boolean[] isScannerFromSystem = new boolean[]{true};
     public static List<String> executed_scripts = new ArrayList<>();
@@ -388,7 +391,8 @@ public void addComponentsToContainer() {
             ticket.getCoordinates().getY();//double
             ticket.getCoordinates().getX();//float
             NumberFormat numberFormat=NumberFormat.getInstance(currentLocale);
-            String price =numberFormat.format( ticket.getPrice());
+            NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(currentLocale);
+            //String price =numberFormat.format( ticket.getPrice());
             String X =numberFormat.format(ticket.getCoordinates().getY());
             String Y =numberFormat.format(ticket.getCoordinates().getX());
             try{
@@ -401,7 +405,7 @@ public void addComponentsToContainer() {
             canvas.addVisual(ticket);
             tableModel.addRow(new Object[]{
                     ticket.getId(),ticket.getName(),X,Y,
-                    price,ticket.getComment(),ticket.getType(),ticket.getEvent().getEventType(),
+                    currencyInstance.format(ticket.getPrice()),ticket.getComment(),ticket.getType(),ticket.getEvent().getEventType(),
                     ticket.getEvent().getName(),ticket.getEvent().getId(),ticket.getRefundable(),
                     ticket.getUser().getName(),sD.format(ticket.getCreationDate())});
         }

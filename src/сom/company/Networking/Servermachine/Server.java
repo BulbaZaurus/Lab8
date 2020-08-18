@@ -25,6 +25,7 @@ import сom.company.Collection.command.CollectionCommand;
 
 /**
  * @author Dlinnый
+ * @version 3.0
  */
 public class Server extends Messenger {
     private static int core = Runtime.getRuntime().availableProcessors();

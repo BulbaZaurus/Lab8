@@ -1,13 +1,17 @@
 package сom.company.Collection;
 
+import сom.company.GUI.LoginForm;
 import сom.company.Networking.Client;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 
 import static сom.company.GUI.LoginForm.currentLocale;
@@ -180,19 +184,25 @@ public class Ticket implements Comparable<Ticket>, Serializable {
 
     @Override
     public String toString(){
+        NumberFormat numberFormat=NumberFormat.getInstance(LoginForm.currentLocale);
+        ResourceBundle resourceBundle =ResourceBundle.getBundle("locale",LoginForm.currentLocale);
+        String Price =numberFormat.format( price);
+        String X =numberFormat.format(coordinates.getX());
+        String Y =numberFormat.format(coordinates.getY());
+        NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(currentLocale);
+        SimpleDateFormat sD=new SimpleDateFormat(resourceBundle.getString("date"));
         return "\n" + "ID: " + id
                 + "\n" + "name: " + name
-                + "\n" + "coordinatesX: " + coordinates.getX()
-                + "\n" + "coordinatesY: " + coordinates.getY()
-                + "\n" + "creationDate: " + creationDate
-                + "\n" + "price: " + price
+                + "\n" + "coordinatesX: " + X
+                + "\n" + "coordinatesY: " + Y
+                + "\n" + "creationDate: " + sD.format(creationDate)
+                + "\n" + "price: " + currencyInstance.format(price)
                 + "\n" + "comment: " + comment
                 + "\n" + "type: " + type
                 + "\n" + "event Type: " + event.getEventType()
                 + "\n" + "event Name: " + event.getName()
                 + "\n" + "event ID : " + event.getId()
                 + "\n" + "hashCode: " + hashCode()
-                + "\n" + "LocalDate: "  + LocalDate.now()
                 + "\n" + "Refundable: "  + getRefundable()
                 + "\n" + "---------------------------------------";
 
