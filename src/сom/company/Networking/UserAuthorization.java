@@ -40,19 +40,19 @@ public class UserAuthorization implements Serializable {
         }
     }
 
-    //returns true if logged in successfully. false otherwise
-    public static boolean TryLogIn(User user, Connection connection){ // операция залогинивания
+
+    public static boolean TryLogIn(User user, Connection connection){
         EnsureTheTableExists(connection);
 
         try
         {
-            //find a user with our login
+
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM "+tableName+" WHERE login = ?");
             preparedStatement.setString(1, user.getName());
             System.out.println(Encrypt.EncryptMD(user.getPassword()));
-            //if the found user login and password match -> return true
             ResultSet resultSet = preparedStatement.executeQuery();
 
+            
             boolean isResultSetEmpty = !resultSet.next();
             if(isResultSetEmpty){
                 return false;
@@ -61,7 +61,7 @@ public class UserAuthorization implements Serializable {
             if(user.getName().equals(resultSet.getString("login")) && Encrypt.EncryptMD(user.getPassword()).equals(resultSet.getString("password"))) {
                 return true;
             }
-
+            System.out.println("NOT PASS");
             preparedStatement.close();
             resultSet.close();
         } catch (SQLException e) {
@@ -74,19 +74,19 @@ public class UserAuthorization implements Serializable {
 
     }
 
-    //returns true if signed in successfully. false otherwise
+
     public static boolean TrySignIn(User user,Connection connection) {
         EnsureTheTableExists(connection);
 
         try{
-            //try to find user with the same id
+
            PreparedStatement tryToFindUserWithTheSameId = connection.prepareStatement("SELECT login FROM users WHERE login=?");
             tryToFindUserWithTheSameId.setString(1,user.getName());
             ResultSet rs = tryToFindUserWithTheSameId.executeQuery();
 
 
             if(rs.next()){
-                //found user with the same login
+
                 tryToFindUserWithTheSameId.close();
                 rs.close();
                 return false;
@@ -98,11 +98,10 @@ public class UserAuthorization implements Serializable {
 
 
 
-            //insert new user
             String sql = "insert into users (login, password) values (?,?)";
             PreparedStatement insertNewUserStatement = connection.prepareStatement(sql);
             insertNewUserStatement.setString(1, user.getName());
-            insertNewUserStatement.setString(2, user.getPassword());
+            insertNewUserStatement.setString(2, Encrypt.EncryptMD(user.getPassword()));
             int rows =insertNewUserStatement.executeUpdate();
             System.out.println(rows);
             insertNewUserStatement.close();

@@ -21,8 +21,6 @@ public class Coordinates implements Serializable {
             this.y=y;
     }
 
-
-
     public Double getY() {
         return y;
     }

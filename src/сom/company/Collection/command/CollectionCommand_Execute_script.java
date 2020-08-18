@@ -16,6 +16,7 @@ public class CollectionCommand_Execute_script implements CollectionCommand, Seri
     public String file_path;
 
     public CollectionCommand_Execute_script(String file_path) {
+
         this.file_path = file_path;
     }
 

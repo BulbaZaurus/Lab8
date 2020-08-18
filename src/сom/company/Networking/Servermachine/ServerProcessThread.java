@@ -32,7 +32,6 @@ import java.util.concurrent.locks.ReentrantLock;
         private DatagramChannel channel;
         private ForkJoinPool forkJoinPool;
         ReentrantLock reentrantLock=new ReentrantLock();
-        ExecutorService cachedThreadPool;
 
         public ServerProcessThread(Message receivedMessage, Connection connection, DatagramChannel channel, ForkJoinPool forkJoinPool) { ;
             this.receivedMessage = receivedMessage;
@@ -42,39 +41,28 @@ import java.util.concurrent.locks.ReentrantLock;
         }
 
 
-        class Pool extends RecursiveAction{
-            @Override
-            protected void compute(){
-                boolean isLoggedIn = UserAuthorization.TryLogIn(receivedMessage.getUser(), connection);
 
-                new ServerThreadSender(new Message(isLoggedIn ? UserStatus.LOGGED_IN : UserStatus.NONE, null, true, null), channel, receivedMessage.getSenderAddress());
-
-            }
-        }
-
-        Pool pool=new Pool();
         @Override
         public void run() {
 
             reentrantLock.lock();
-            //отвечает за многпоточную отправку ответа
+
             try {
                 if (receivedMessage.getContent() instanceof LogIn) {
                     boolean isLoggedIn = UserAuthorization.TryLogIn(receivedMessage.getUser(), connection);
-                    ForkJoinPool.commonPool().execute(  new ServerThreadSender(new Message(isLoggedIn ? UserStatus.LOGGED_IN : UserStatus.NONE, null, true, null), channel, receivedMessage.getSenderAddress()));
-
+                    ForkJoinPool.commonPool().execute(  new ServerThreadSender(new Message(isLoggedIn ? UserStatus.LOGGED_IN : UserStatus.NONE, null, true, null,Controller.getTickets()), channel, receivedMessage.getSenderAddress(),Controller.getTickets()));
+                    
                     return;
                 }
                 if (receivedMessage.getContent() instanceof Registration) {
 
                     boolean isSignedIn = UserAuthorization.TrySignIn(receivedMessage.getUser(), connection);
-                    ForkJoinPool.commonPool().execute(new ServerThreadSender(new Message(isSignedIn ? UserStatus.SIGNED_IN : UserStatus.NONE, null, true, null), channel, receivedMessage.getSenderAddress()));
+                    ForkJoinPool.commonPool().execute(new ServerThreadSender(new Message(isSignedIn ? UserStatus.SIGNED_IN : UserStatus.NONE, null, true, null,Controller.getTickets()), channel, receivedMessage.getSenderAddress(),Controller.getTickets()));
 
                     return;
                 }
                 String[] output = CommandToCollection((CollectionCommand) receivedMessage.getContent(), receivedMessage.getUser());
-                //send constructed message to the client
-                ForkJoinPool.commonPool().execute(new ServerThreadSender(new Message(output, null, true, null), channel, receivedMessage.getSenderAddress()));
+                ForkJoinPool.commonPool().execute(new ServerThreadSender(new Message(output, null, true, null,Controller.getTickets()), channel, receivedMessage.getSenderAddress(),Controller.getTickets()));
 
             } catch (StackOverflowError e){
             System.out.println("Переполнение стека");

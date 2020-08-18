@@ -19,19 +19,14 @@ public class CollectionCommand_Save implements  Serializable, CollectionCommand 
     private final String USERNAME="postgres";
     private final String PASSWORD="root";
     private  final String sql="INSERT INTO  tic (name,coordinatesx,coordinatesy,price,comment,type,eventtype,eventname,refundable,username,creationdate) values (?,?,?,?,?,?,?,?,?,?,?)";
-
-
-
     @Override
     public void Execute(TreeSet<Ticket> tickets, Scanner[] in,
                         String savePath, boolean[] isScannerFromSystem, List<String> executed_scripts, User user){
-
         try {
             Connection connection= DriverManager.getConnection(HOST,USERNAME,PASSWORD);
             Statement statement=connection.createStatement();
             PreparedStatement preparedStatement=connection.prepareStatement(sql);
             {
-
                 statement.executeUpdate("TRUNCATE tic");
                 for (Ticket ticket:tickets){
                     preparedStatement.setString(1,ticket.getName());
@@ -49,20 +44,13 @@ public class CollectionCommand_Save implements  Serializable, CollectionCommand 
                     System.out.println(rows);
                 }
             }
-
-
-
-
-                //int row= statement.executeUpdate("insert into tickets(name,coordinatesX,coordinatesY,price,comment,type,eventType,eventname,refundable) values ("+name+","+coordx+","+coordy+","+price+","+comment+","+ticket.getType()+","+ticket.getEvent().getEventType()+","+eventname+","+ticket.getRefundable()+")");
-
         } catch (SQLException e){
             e.printStackTrace();
-
         }
 
 
 
 
-        ///подумай че сделать как запихнуть в байтовый поток
+
     }
 }

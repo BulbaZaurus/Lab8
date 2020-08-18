@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class CollectionCommand_PrintPrice implements CollectionCommand, Serializable {
     private static final long serialVersionUID = 11L;
-    String[] args;
+
     public CollectionCommand_PrintPrice() {
 
     }

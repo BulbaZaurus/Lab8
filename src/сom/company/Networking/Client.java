@@ -1,15 +1,14 @@
 package сom.company.Networking;
 
-
-
-
-
-
 import сom.company.Collection.Controller;
+import сom.company.Collection.Ticket;
 import сom.company.Collection.User;
 import сom.company.Collection.UserStatus;
 import сom.company.Collection.command.*;
 import сom.company.GUI.LoginForm;
+import сom.company.Networking.Servermachine.Server;
+
+import javax.swing.*;
 
 import static сom.company.Networking.Communicator.Write;
 import static сom.company.Networking.Communicator.WriteStringArray;
@@ -25,43 +24,38 @@ import java.util.*;
  * @version 1.8
  */
 public class Client extends Messenger {
-    static User user;
+    public  static  User user;
+
+    static TreeSet<Ticket> treeSet;
+
+    public static TreeSet<Ticket> getTreeSet() {
+        return treeSet;
+    }
+
+    static ArrayList<Long> idList;
+
+    public static ArrayList<Long> getIdList() {
+        return idList;
+    }
 
     public static User getUser() {
         return user;
     }
-    private String host;
-    private String port;
+
     public static SocketAddress ADDRESS;
     private static DatagramChannel channel;
     private static Scanner scanner;
-    private InputStream inputStream;
 
 
     public static void setUser(User user) {
         Client.user = user;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    private static List<String> executed_scripts= new ArrayList<String>();
+    public static List<String> executed_scripts= new ArrayList<String>();
 
     public static void main(String[] args) {
-        user = new User("root","root");
+
+        
         if (args.length != 2) {
             System.out.println("Syntax: сom.company.сom.company.Networking.Networking.Client <hostname> <port>");
             return;
@@ -69,11 +63,10 @@ public class Client extends Messenger {
 
         InitReader();
         ConnectToServer(args[0], args[1]);
-        //StartWindow.StartClientGUI();
-        LoginForm.StartLogin();
+        Locale.setDefault(new Locale("pl","PL"));
+        System.out.println(Locale.getDefault());
+        SwingUtilities.invokeLater(()->LoginForm.StartLogin());
 
-        //Userinitilization();
-        Process();
 
     }
 
@@ -90,97 +83,50 @@ public class Client extends Messenger {
 
 
 
-    public static void Process() {
-        while (true) {
-            //create a command that will be sent to the server
-            Controller.PrintWaitingInfo();
+    public static void Process(CollectionCommand command) {
 
-            CollectionCommand command = CommandBuilder.Build(Read());
-            if(command==null){
-                continue;
-            }
+    Controller.PrintWaitingInfo();
+        Controller.PrintWaitingInfo();
+        if(command==null){
 
-            if(OverrideCommandsClient(command)){
-                continue;
-            }
-
-            try {
-                Thread.sleep(500);
-            }catch(InterruptedException e){
-                Write(e.getStackTrace().toString());
-            }
-            //receive the response
-            Message receivedMessage = ReceiveMessage(channel);
-
-            //output the response
-            if(receivedMessage.getContent()==null){
-                continue;
-            }
-            WriteStringArray((String[])(receivedMessage.getContent()));
-            //wait a second
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
         }
-    }
-    private static boolean OverrideCommandsClient(CollectionCommand collectionCommand){
-        if(collectionCommand instanceof CollectionCommand_Save){
-            Write("Нельзя использовать комманду save на клиенте ");
-            return true;
+
+        if(OverrideCommandsClient(command)){
+
         }
 
         try {
-            if (collectionCommand instanceof CollectionCommand_Execute_script) {
-                if(executed_scripts.contains(((CollectionCommand_Execute_script) collectionCommand).file_path)){
-                    //recursion
-                    Write("ТЫ не пройдешь!");
-                    Write("Тип...рекурсия и всё такое");
-                    InitReader();
-                    return true;
-                }
-                executed_scripts.add(((CollectionCommand_Execute_script) collectionCommand).file_path);
-                InputStream is = new FileInputStream(((CollectionCommand_Execute_script) collectionCommand).file_path);
-                InitReader(is);
-                return true;
-            }
-        }catch(FileNotFoundException ex){
-            Write("Файл не найден");
+            Thread.sleep(500);
+        }catch(InterruptedException e){
+            Write(e.getStackTrace().toString());
         }
 
-        if(collectionCommand instanceof CollectionCommand_Update_id){
-            SendMessage(new Message(new ShowById(((CollectionCommand_Update_id) collectionCommand).id),user,true,null),channel,ADDRESS);
+        Message receivedMessage = ReceiveMessage(channel);
 
-            try {
-                Thread.sleep(500);
-            }catch(InterruptedException e){
-                Write(e.getStackTrace().toString());
-            }
-            //receive the response
-            Message receivedMessage = ReceiveMessage(channel);
 
-            //output the response
-            if(receivedMessage!=null) {
-                String[] output = (String[])(receivedMessage.getContent());
-                if(output.length==0){
-                    Write("Билет с таким id не найден.");
-                    return true;
-                }
-                Write(Integer.toString(output.length));
-                for (String str: output) {
-                    Write(str);
-                }
-            }
-            ((CollectionCommand_Update_id) collectionCommand).Prepare();
+       if(receivedMessage.getContent()==null){
+           System.out.println("Тут происходит ошибка,которая не мешает вам");
         }
+        WriteStringArray((String[])(receivedMessage.getContent()));
 
-        //SendMessage(new Message(command,user,true,null), channel, ADDRESS);
+        try {
+            Thread.sleep(500); //было 1000
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        treeSet=receivedMessage.getTickets();
 
+        System.out.println(idList);
+        System.out.println("Размер коллекции это "+ treeSet.size());
+
+    }
+
+    private static boolean OverrideCommandsClient(CollectionCommand collectionCommand){
         if(collectionCommand instanceof CollectionCommand_Exit){
             collectionCommand.Execute(null,null,"",new boolean[]{false},null,user);
         }
-        SendMessage(new Message(collectionCommand,user,true,null), channel, ADDRESS);
+
+        SendMessage(new Message(collectionCommand,user,true,null,Controller.getTickets()), channel, ADDRESS,treeSet);
         return false;
     }
 
@@ -238,10 +184,10 @@ public class Client extends Messenger {
 
 
     public static boolean LoginUser(User user){
-        Message msg=new Message(new LogIn(),user,true,null);
-        SendMessage(msg,channel,ADDRESS);
+        Message msg=new Message(new LogIn(),user,true,null, Server.getTreeSet());
+        SendMessage(msg,channel,ADDRESS,treeSet);
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         }catch(InterruptedException e){
             Write(e.getStackTrace().toString());
         }
@@ -250,7 +196,7 @@ public class Client extends Messenger {
             Write("Сервер не отвечает.Попробуйте позже");
             return false;
         }
-        if(receivedMessage.getContent() == UserStatus.LOGGED_IN){
+        else if(receivedMessage.getContent() == UserStatus.LOGGED_IN){
             Write("Вход в систему успешно завершен");
             System.out.println(user.toString());
             return true;
@@ -262,8 +208,8 @@ public class Client extends Messenger {
     }
 
     public static boolean RegistrationUser(User user){
-        Message msg = new Message(new Registration(),user,true,null);
-        SendMessage(msg,channel,ADDRESS);
+        Message msg = new Message(new Registration(),user,true,null,Controller.getTickets());
+        SendMessage(msg,channel,ADDRESS,treeSet);
         try {
             Thread.sleep(500);
         }catch(InterruptedException e){
@@ -284,75 +230,7 @@ public class Client extends Messenger {
         }
 
     }
-    public static void Userinitilization(){
-        User user = new User();
-        User secondUser=new User();
-        System.out.println("Владыка,приветсвую тебя!");
-        System.out.println("Если у вас отсутсвует аккаунт то пропишите registration иначе login ");
-        String userAction = new Scanner(System.in).nextLine();
-        switch (userAction){
-            case "login":
-                String name =User.inputName();
-                String password = User.inputPassword();
-                user.setName(name);
-                user.setPassword(password);
 
-                Message msg=new Message(new LogIn(),user,true,null);
-                SendMessage(msg,channel,ADDRESS);
-                try {
-                    Thread.sleep(500);
-                }catch(InterruptedException e){
-                    Write(e.getStackTrace().toString());
-                }
-                Message receivedMessage = ReceiveMessage(channel);
-                if(receivedMessage==null){
-                    Write("Сервер не отвечает.Попробуйте позже");
-                    Userinitilization();
-                    return;
-                }
-                if(receivedMessage.getContent() == UserStatus.LOGGED_IN){
-                    Write("Вход в систему успешно завершен");
-                    System.out.println(user.toString());
-                }else{
-                    Write("Мы не обнаружили никого,кто бы подходил по этим параметрам.");
-                    Userinitilization();
-                }
-                break;
-            case "registration":
-                String nameS =User.inputName();
-                String passwordS = User.inputPassword();
-
-
-                user=new User(nameS,passwordS);
-
-
-                msg = new Message(new Registration(),user,true,null);
-                SendMessage(msg,channel,ADDRESS);
-                try {
-                    Thread.sleep(500);
-                }catch(InterruptedException e){
-                    Write(e.getStackTrace().toString());
-                }
-                receivedMessage = ReceiveMessage(channel);
-                if(receivedMessage==null){
-                    Write("Сервер не отвечает.Попробуйте позже");
-                    Userinitilization();
-                    return;
-                }
-                if(receivedMessage.getContent() == UserStatus.SIGNED_IN){
-                    Write("Регистрация выполнена успешно");
-                }else{
-                    Write("Владыка,это имя уже занято.Повторите процедуру регистрации ");
-                    Userinitilization();
-                }
-                break;
-            default:
-                System.out.println("Я не понимаю,что ты хочешь от меня!");
-                System.out.println("Начинаю процедуру заново ");
-                System.out.println("");
-                Userinitilization();
-        }
-    }
 
 
 }

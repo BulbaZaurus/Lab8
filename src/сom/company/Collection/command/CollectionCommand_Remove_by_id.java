@@ -22,21 +22,6 @@ public class CollectionCommand_Remove_by_id implements CollectionCommand, Serial
     @Override
     public void Execute(TreeSet<Ticket> tickets, Scanner[] in,
                         String savePath, boolean[] isScannerFromSystem, List<String> executed_scripts, User user){
-        boolean found=false;
-        /*try {
-            found = tickets.removeIf((i) -> {
-                return i.id == id;
-            });
-            if(found) {
-                System.out.println("Успешно удален эллемент с id  = " + id + ".");
-            }else{
-                System.out.println("Не обнаружен билет с данным id");
-            }
-        } catch (Exception e) {
-            System.out.println("ЭКСЕПШОН");
-        }
-
-         */
         try{
             for(Ticket ticket:tickets){
                 if(ticket.getId()==id){

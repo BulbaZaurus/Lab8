@@ -51,12 +51,10 @@ public class DBSavingProtocol {
                 Coordinates coordinates;
                 Float coordx;
                 coordx=Float.parseFloat(String.valueOf(resultSet.getFloat("coordinatesx")));
-                //newTicket.coordinates.setX(Float.parseFloat(resultSet.getString("coordinatesx")));
                 Double coordy;
                 coordy=Double.parseDouble(String.valueOf(resultSet.getDouble("coordinatesy")));
                 coordinates= new Coordinates(coordx,coordy);
                 newTicket.setCoordinates(coordinates);
-                //newTicket.coordinates.setY(Double.parseDouble(resultSet.getString("coordinatesy")));
                 newTicket.setPrice(Float.parseFloat(resultSet.getString("price")));
                 newTicket.setComment(resultSet.getString("comment"));
                 TicketType type;
@@ -69,7 +67,7 @@ public class DBSavingProtocol {
                 event.setName(resultSet.getString("eventname"));
                 event.setId(resultSet.getLong("id"));
                 newTicket.setEvent(event);
-                newTicket.setCreationDate(Ticket.StringToDate(resultSet.getString("creationdate")));
+                newTicket.setTime(resultSet.getString("creationdate"));
                 User user = new User();
                 user.setName(resultSet.getString("userName"));
                 newTicket.setUser(user);
@@ -100,7 +98,7 @@ public class DBSavingProtocol {
             preparedStatement.setString(8,ticket.getEvent().getName());
             preparedStatement.setBoolean(9,ticket.getRefundable());
             preparedStatement.setString(10, ticket.getUser().getName());
-            preparedStatement.setString(11,ticket.DateToString());
+            preparedStatement.setString(11,ticket.getTime());
 
             preparedStatement.executeUpdate();
             ResultSet keys = preparedStatement.getGeneratedKeys();
@@ -116,6 +114,7 @@ public class DBSavingProtocol {
     public static void UpdateElementInDatabase(Ticket ticket, Connection connection, Statement statement) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE tickets SET name=?,coordinatesX=?,coordinatesY=?,price = ?, comment=?,type=?,eventType=?,eventName=?,refundable=?,username=?,creationdate=? WHERE id=?");
+            //System.out.println(ticket.coordinates.getX());
             preparedStatement.setString(1,ticket.getName());
             preparedStatement.setFloat(2,ticket.coordinates.getX());
             preparedStatement.setDouble(3,ticket.coordinates.getY());
@@ -126,7 +125,7 @@ public class DBSavingProtocol {
             preparedStatement.setString(8,ticket.getEvent().getName());
             preparedStatement.setBoolean(9,ticket.getRefundable());
             preparedStatement.setString(10, ticket.getUser().getName());
-            preparedStatement.setString(11,ticket.DateToString());
+            preparedStatement.setString(11,ticket.getTime());
             preparedStatement.setInt(12,Integer.parseInt(Long.toString(ticket.getId())));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

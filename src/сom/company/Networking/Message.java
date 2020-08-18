@@ -1,9 +1,13 @@
 package сom.company.Networking;
 
+import сom.company.Collection.Controller;
+import сom.company.Collection.Ticket;
 import сom.company.Collection.User;
+import сom.company.Networking.Servermachine.Server;
 
 import java.io.Serializable;
 import java.net.SocketAddress;
+import java.util.TreeSet;
 
 /**
  * Отвечает за пересылку комманд
@@ -13,12 +17,18 @@ public class Message implements Serializable {
     private User user;
     private boolean waitForResponse;
      SocketAddress senderAddress;
+    TreeSet<Ticket> tickets;
 
-    public Message(Object content,User user,boolean waitForResponse, SocketAddress senderAddress) {
+    public TreeSet<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public Message(Object content, User user, boolean waitForResponse, SocketAddress senderAddress, TreeSet<Ticket> tickets) {
         this.content = content;
         this.user=user;
         this.waitForResponse=waitForResponse;
         this.senderAddress = senderAddress;
+        this.tickets= Controller.getTickets();
     }
 
     public User getUser() {
@@ -40,14 +50,6 @@ public class Message implements Serializable {
 
     public void setContent(Object content) {
         this.content = content;
-    }
-
-    public void setSenderAddress(SocketAddress senderAddress) {
-        this.senderAddress = senderAddress;
-    }
-
-    public void setWaitForResponse(boolean waitForResponse) {
-        this.waitForResponse = waitForResponse;
     }
 
     public boolean getWaitForResponse() {

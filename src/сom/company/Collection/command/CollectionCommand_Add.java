@@ -1,5 +1,6 @@
 package сom.company.Collection.command;
 
+import сom.company.GUI.MainForm;
 import сom.company.Networking.DBSavingProtocol;
 
 import сom.company.Collection.Ticket;
@@ -26,6 +27,7 @@ public class CollectionCommand_Add implements CollectionCommand, Serializable {
         try {
             element.setUser(user);
             tickets.add(element);
+
             DBSavingProtocol.AddNewElementToDatabaseAndReturnId(element, Server.getConnection(),Server.getStatement());
             System.out.println("Элемент успешно добавлен");
         }catch (Exception e){

@@ -16,27 +16,36 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.TreeSet;
 
 import static сom.company.GUI.LoginForm.currentLocale;
 
-public class AddForm extends CreativeForm{
+public class AddIfMaxForm extends CreativeForm {
 
-    public static AddForm frame = new AddForm();
+    public static AddIfMaxForm frame = new AddIfMaxForm();
 
-    private AddForm(){
+    private AddIfMaxForm(){
         super();
     }
 
     @Override
     void makeChange(){
-        Client.getTreeSet().clear();
-        Client.Process(new CollectionCommand_Add(getBufTicket()));
-        summoner.getBinder().refresh();
+        TreeSet<Ticket> treeSetForMax=Client.getTreeSet();
+        resourceBundle = ResourceBundle.getBundle("locale",currentLocale);
+        if(treeSetForMax.size()!=0){
+            if(getBufTicket().compareTo(treeSetForMax.last())>0){
+                Client.getTreeSet().clear();
+                Client.Process(new CollectionCommand_Add(getBufTicket()));
+                summoner.getBinder().refresh();
+            }
+            else JOptionPane.showMessageDialog(null,resourceBundle.getString("MoreThan")+" "+ treeSetForMax.last().getPrice());
+        }
+        else JOptionPane.showMessageDialog(null,resourceBundle.getString("Empty"));
     }
     
     @Override
     void makeHeader(){
-        frame.setTitle("Ticket cooking");
+        frame.setTitle("Maximal ticket cooking");
     }
 
     public static void main(MainForm mainWin) {

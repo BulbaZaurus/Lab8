@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Scanner;
 
+import static сom.company.GUI.LoginForm.currentLocale;
+
 /**
  * От данного класса создаются все Ticket`ы
  */
@@ -26,9 +28,18 @@ public class Ticket implements Comparable<Ticket>, Serializable {
     public TicketType type; //Поле не может быть null
     public Event event; //Поле не может быть null
     private User user;
+    private String time;
 
     public User getUser() {
         return user;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public void setUser(User user) {
@@ -50,8 +61,26 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         this.type=type;
         this.event=event;
         this.creationDate= creationDate;
+    }
+    public Ticket( String name, Coordinates coordinates, Float price, String comment, Boolean refundable, TicketType type, Event event, String time,User user){
+        this.time=time;
+        this.name=name;
+        this.coordinates=coordinates;
+        if(price<=0){
+            System.out.println(" Товарищ,постойте у вас обнаружено значение цены меньше 0");
+            System.out.println("Высставляю минимальное значение");
+            System.out.println("Вот только теперь");
+            this.price=0.1F;
+        }else
+            this.price=price;
+        this.comment=comment;
+        this.refundable=refundable;
+        this.type=type;
+        this.event=event;
 
     }
+    public Ticket(Long id,String name, Coordinates coordinates, String price, String comment, Boolean refundable, TicketType type, Event event, Date creationDate,User user){}
+    public Ticket(Long id,String name, Coordinates coordinates, Float price, String comment, Boolean refundable, TicketType type, Event event, Date creationDate,User user){}
     public Ticket(){}
 
     public Ticket(Event event) {
@@ -353,8 +382,12 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         return  ticket;
     }
 
+
+
     public String DateToString(){
-        DateFormat dateFormat=new SimpleDateFormat("dd MMMM yyyy zzzz");
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z",currentLocale);
+        String time=simpleDateFormat.format(creationDate);
+        DateFormat dateFormat=new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z",currentLocale);
         String strDate=dateFormat.format(getCreationDate());
         return strDate;
     }
@@ -453,6 +486,7 @@ public class Ticket implements Comparable<Ticket>, Serializable {
         }
         sb.append(ticket.getUser().getName());
         sb.append(";");
+        sb.append("@");
 
 
         return sb.toString();

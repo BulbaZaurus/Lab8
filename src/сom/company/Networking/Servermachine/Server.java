@@ -9,11 +9,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.*;
 
 
 import сom.company.Collection.Controller;
+import сom.company.Collection.Ticket;
 import сom.company.Collection.User;
+import сom.company.GUI.MainForm;
+import сom.company.Networking.DBSavingProtocol;
 import сom.company.Networking.Message;
 import сom.company.Networking.Messenger;
 import сom.company.Collection.command.CollectionCommand;
@@ -24,7 +28,6 @@ import сom.company.Collection.command.CollectionCommand;
  */
 public class Server extends Messenger {
     private static int core = Runtime.getRuntime().availableProcessors();
-    private static User user;
     private static DatagramChannel channel;
     private static Connection connection;
     private static Statement statement;
@@ -32,7 +35,11 @@ public class Server extends Messenger {
     private static final String NAME = "postgres";
     private static final String PASS = "root";
     static Controller controller ;
-    private static ExecutorService FTPProcessing= Executors.newFixedThreadPool(core);//отвечает за  обработку полученного запроса
+    static TreeSet<Ticket> treeSet;
+    public static TreeSet<Ticket> getTreeSet() {
+        return treeSet;
+    }
+    private static ExecutorService FTPProcessing= Executors.newFixedThreadPool(core);
     private static ForkJoinPool forkJoinPool=new ForkJoinPool();
     public static Connection getConnection() {
         return connection;
@@ -44,18 +51,14 @@ public class Server extends Messenger {
 
     public static void main(String[] args) {
         controller=new Controller();
+        treeSet= Controller.getTickets();
         if (args.length != 1) {
             System.out.println("Syntax: сom.company.сom.company.Networking.Networking.Servermachine.Server <port>");
             return;
         }
-
-
         DBConnection();
-
         controller.main(new String[]{"savePath.xml", "true"},connection,statement);
-
         InitConnection(Integer.parseInt(args[0]));
-
         Process();
     }
     /**
@@ -90,15 +93,11 @@ public class Server extends Messenger {
      */
     private static void Process() {
         while(true){
-            //receive msg
-            //Message receivedMessage = ReceiveMessage(channel);
             Message receivedMessage=ReceiveMessage(channel);
            controller.setMessage(receivedMessage);
             boolean Someboolean=receivedMessage!=null && receivedMessage.getContent()!=null;
-
             if(Someboolean) {
                 FTPProcessing.execute(new ServerProcessThread(receivedMessage,connection,channel,forkJoinPool));
-
             }
         }
     }

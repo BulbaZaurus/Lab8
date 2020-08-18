@@ -18,9 +18,6 @@ public enum EventType implements Serializable {
         this.VALUE=VALUE;
     }
 
-    public int getVALUE() {
-        return VALUE;
-    }
 
 
 
